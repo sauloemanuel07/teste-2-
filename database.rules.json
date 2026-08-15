@@ -1,0 +1,236 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && data.exists()",
+        ".validate": "newData.hasChildren(['uid', 'name', 'email', 'currentWorkshopId', 'createdAt', 'updatedAt']) && newData.child('uid').val() === auth.uid && newData.child('uid').val() === data.child('uid').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('currentWorkshopId').val() === data.child('currentWorkshopId').val() && newData.child('name').isString() && newData.child('name').val().length >= 2 && newData.child('name').val().length <= 120 && newData.child('email').isString() && newData.child('email').val().length <= 254 && newData.child('updatedAt').isNumber()",
+        "uid": {".validate": true},
+        "name": {".validate": true},
+        "email": {".validate": true},
+        "currentWorkshopId": {".validate": true},
+        "createdAt": {".validate": true},
+        "updatedAt": {".validate": true},
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "workshops": {
+      "$workshopId": {
+        ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true",
+        ".write": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true && root.child('workshopUsers').child($workshopId).child(auth.uid).child('role').val() === 'OWNER'",
+        ".validate": "newData.hasChildren(['id', 'name', 'ownerUid', 'plan', 'status', 'createdAt', 'updatedAt']) && newData.child('id').val() === $workshopId && newData.child('id').val() === data.child('id').val() && newData.child('ownerUid').val() === data.child('ownerUid').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('name').isString() && newData.child('name').val().length >= 2 && newData.child('name').val().length <= 120 && newData.child('plan').val().matches(/^(BASIC|PRO|PREMIUM)$/) && newData.child('status').val().matches(/^(TRIAL|ACTIVE|PAST_DUE|CANCELLED)$/) && newData.child('updatedAt').isNumber()",
+        "id": {".validate": true},
+        "name": {".validate": true},
+        "ownerUid": {".validate": true},
+        "phone": {".validate": "newData.isString() && newData.val().length <= 24"},
+        "whatsapp": {".validate": "newData.isString() && newData.val().length <= 24"},
+        "email": {".validate": "newData.isString() && newData.val().length <= 254"},
+        "document": {".validate": "newData.isString() && newData.val().length <= 18"},
+        "plan": {".validate": true},
+        "status": {".validate": true},
+        "createdAt": {".validate": true},
+        "updatedAt": {".validate": true},
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "workshopUsers": {
+      "$workshopId": {
+        ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true",
+        "$uid": {
+          ".write": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true && root.child('workshopUsers').child($workshopId).child(auth.uid).child('role').val() === 'OWNER' && $uid !== root.child('workshops').child($workshopId).child('ownerUid').val()",
+          ".validate": "newData.hasChildren(['uid', 'role', 'active', 'createdAt', 'updatedAt']) && newData.child('uid').val() === $uid && newData.child('uid').val() === data.child('uid').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('role').val().matches(/^(OWNER|MANAGER|MECHANIC|ATTENDANT|FINANCIAL)$/) && newData.child('active').isBoolean() && newData.child('updatedAt').isNumber()",
+          "uid": {".validate": true},
+          "role": {".validate": true},
+          "active": {".validate": true},
+          "createdAt": {".validate": true},
+          "updatedAt": {".validate": true},
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    "customers": {
+      "$workshopId": {
+        ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true",
+        ".indexOn": ["nameNormalized", "phoneNormalized", "createdAt", "active"],
+        "$customerId": {
+          ".write": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true && root.child('workshopUsers').child($workshopId).child(auth.uid).child('role').val().matches(/^(OWNER|MANAGER|ATTENDANT)$/)",
+          ".validate": "newData.hasChildren(['id', 'workshopId', 'name', 'nameNormalized', 'phone', 'phoneNormalized', 'active', 'createdAt', 'createdBy', 'updatedAt']) && newData.child('id').val() === $customerId && newData.child('workshopId').val() === $workshopId && ((!data.exists() && newData.child('createdBy').val() === auth.uid) || (data.exists() && newData.child('id').val() === data.child('id').val() && newData.child('workshopId').val() === data.child('workshopId').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('createdBy').val() === data.child('createdBy').val())) && newData.child('name').isString() && newData.child('name').val().length >= 2 && newData.child('name').val().length <= 120 && newData.child('nameNormalized').isString() && newData.child('nameNormalized').val().length <= 120 && newData.child('phone').isString() && newData.child('phone').val().length <= 24 && newData.child('phoneNormalized').isString() && newData.child('phoneNormalized').val().length >= 10 && newData.child('phoneNormalized').val().length <= 13 && newData.child('active').isBoolean() && newData.child('createdAt').isNumber() && newData.child('updatedAt').isNumber()",
+          "id": {".validate": true},
+          "workshopId": {".validate": true},
+          "name": {".validate": true},
+          "nameNormalized": {".validate": true},
+          "phone": {".validate": true},
+          "phoneNormalized": {".validate": true},
+          "active": {".validate": true},
+          "createdAt": {".validate": true},
+          "createdBy": {".validate": true},
+          "updatedAt": {".validate": true},
+          "email": {
+            ".validate": "newData.isString() && newData.val().length <= 254"
+          },
+          "document": {
+            ".validate": "newData.isString() && newData.val().length <= 18"
+          },
+          "notes": {
+            ".validate": "newData.isString() && newData.val().length <= 2000"
+          },
+          "lastVisitAt": {
+            ".validate": "newData.isNumber()"
+          },
+          "totalSpentCents": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    "vehicles": {
+      "$workshopId": {
+        ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true",
+        ".indexOn": ["ownerId", "plateNormalized", "createdAt", "active"],
+        "$vehicleId": {
+          ".write": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true && root.child('workshopUsers').child($workshopId).child(auth.uid).child('role').val().matches(/^(OWNER|MANAGER|ATTENDANT)$/)",
+          ".validate": "newData.hasChildren(['id', 'workshopId', 'ownerId', 'plate', 'plateNormalized', 'brand', 'model', 'year', 'mileage', 'active', 'createdAt', 'createdBy', 'updatedAt']) && newData.child('id').val() === $vehicleId && newData.child('workshopId').val() === $workshopId && root.child('customers').child($workshopId).child(newData.child('ownerId').val()).child('active').val() === true && ((!data.exists() && newData.child('createdBy').val() === auth.uid) || (data.exists() && newData.child('id').val() === data.child('id').val() && newData.child('workshopId').val() === data.child('workshopId').val() && newData.child('createdAt').val() === data.child('createdAt').val() && newData.child('createdBy').val() === data.child('createdBy').val())) && newData.child('plate').isString() && newData.child('plate').val().length >= 7 && newData.child('plate').val().length <= 8 && newData.child('plateNormalized').val().matches(/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/) && newData.child('brand').isString() && newData.child('brand').val().length >= 1 && newData.child('brand').val().length <= 80 && newData.child('model').isString() && newData.child('model').val().length >= 1 && newData.child('model').val().length <= 80 && newData.child('year').isNumber() && newData.child('year').val() >= 1900 && newData.child('year').val() <= 2100 && newData.child('mileage').isNumber() && newData.child('mileage').val() >= 0 && newData.child('active').isBoolean() && newData.child('createdAt').isNumber() && newData.child('updatedAt').isNumber()",
+          "id": {".validate": true},
+          "workshopId": {".validate": true},
+          "ownerId": {".validate": true},
+          "plate": {".validate": true},
+          "plateNormalized": {".validate": true},
+          "brand": {".validate": true},
+          "model": {".validate": true},
+          "year": {".validate": true},
+          "mileage": {".validate": true},
+          "active": {".validate": true},
+          "createdAt": {".validate": true},
+          "createdBy": {".validate": true},
+          "updatedAt": {".validate": true},
+          "version": {
+            ".validate": "newData.isString() && newData.val().length <= 100"
+          },
+          "color": {
+            ".validate": "newData.isString() && newData.val().length <= 50"
+          },
+          "vin": {
+            ".validate": "newData.isString() && newData.val().length <= 40"
+          },
+          "fuel": {
+            ".validate": "newData.isString() && newData.val().length <= 30"
+          },
+          "notes": {
+            ".validate": "newData.isString() && newData.val().length <= 2000"
+          },
+          "photoPath": {
+            ".validate": "newData.isString() && newData.val().length <= 500"
+          },
+          "nextMaintenanceAt": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    "workOrders": {
+      "$workshopId": {
+        ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true",
+        ".indexOn": ["createdAt", "status", "customerId", "vehicleId", "assignedTo", "orderNumber"],
+        "$orderId": {
+          ".write": false
+        }
+      }
+    },
+    "workOrderEvents": {
+      "$workshopId": {
+        "$orderId": {
+          ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true",
+          ".indexOn": ["createdAt", "visibility"],
+          ".write": false
+        }
+      }
+    },
+    "diagnoses": {
+      "$workshopId": {
+        "$orderId": {
+          ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true",
+          ".write": false
+        }
+      }
+    },
+    "estimates": {
+      "$workshopId": {
+        "$orderId": {
+          ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true",
+          ".write": false
+        }
+      }
+    },
+    "payments": {
+      "$workshopId": {
+        "$orderId": {
+          ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true && root.child('workshopUsers').child($workshopId).child(auth.uid).child('role').val().matches(/^(OWNER|MANAGER|FINANCIAL)$/)",
+          ".write": false
+        }
+      }
+    },
+    "analytics": {
+      "$workshopId": {
+        ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true && root.child('workshopUsers').child($workshopId).child(auth.uid).child('role').val().matches(/^(OWNER|MANAGER|FINANCIAL)$/)",
+        ".write": false
+      }
+    },
+    "auditLogs": {
+      "$workshopId": {
+        ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true && root.child('workshopUsers').child($workshopId).child(auth.uid).child('role').val() === 'OWNER'",
+        ".indexOn": ["timestamp", "action", "entityId"],
+        ".write": false
+      }
+    },
+    "publicOrderViews": {
+      "$workshopId": {
+        "$orderId": {
+          ".read": "auth != null && ((root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true) || (auth.token.role === 'CUSTOMER' && auth.token.workshopId === $workshopId && auth.token.orderId === $orderId && root.child('shareLinks').child($workshopId).child($orderId).child(auth.token.shareId).child('active').val() === true && root.child('shareLinks').child($workshopId).child($orderId).child(auth.token.shareId).child('expiresAt').val() > now))",
+          ".write": false
+        }
+      }
+    },
+    "shareLinks": {
+      "$workshopId": {
+        "$orderId": {
+          ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true && root.child('workshopUsers').child($workshopId).child(auth.uid).child('role').val().matches(/^(OWNER|MANAGER|ATTENDANT)$/)",
+          ".write": false
+        }
+      }
+    },
+    "maintenanceReminders": {
+      "$workshopId": {
+        ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true",
+        ".indexOn": ["nextDate", "nextMileage", "status", "vehicleId"],
+        ".write": false
+      }
+    },
+    "workshopSettings": {
+      "$workshopId": {
+        ".read": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true",
+        ".write": "auth != null && root.child('workshopUsers').child($workshopId).child(auth.uid).child('active').val() === true && root.child('workshopUsers').child($workshopId).child(auth.uid).child('role').val() === 'OWNER'",
+        ".validate": "newData.hasChildren(['locale', 'currency', 'orderPrefix', 'createdAt', 'updatedAt']) && newData.child('locale').val() === 'pt-BR' && newData.child('currency').val() === 'BRL' && newData.child('orderPrefix').isString() && newData.child('orderPrefix').val().length >= 1 && newData.child('orderPrefix').val().length <= 8 && newData.child('createdAt').isNumber() && newData.child('updatedAt').isNumber() && (!data.exists() || newData.child('createdAt').val() === data.child('createdAt').val())",
+        "locale": {".validate": true},
+        "currency": {".validate": true},
+        "orderPrefix": {".validate": true},
+        "createdAt": {".validate": true},
+        "updatedAt": {".validate": true},
+        "$other": {".validate": false}
+      }
+    }
+  }
+}

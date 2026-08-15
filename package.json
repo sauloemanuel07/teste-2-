@@ -1,0 +1,23 @@
+{
+  "name": "oficlaro",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "description": "MVP multi-tenant para transparência e gestão de oficinas.",
+  "scripts": {
+    "serve": "firebase emulators:start --only hosting,auth,database,storage,functions",
+    "test": "node --test tests/domain.test.js tests/static.test.js",
+    "test:rules": "firebase emulators:exec --only database,storage,auth \"node --test tests/rules.integration.test.js\"",
+    "deploy:rules": "firebase deploy --only database,storage",
+    "deploy": "firebase deploy"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "firebase": "^12.17.0",
+    "firebase-tools": "^15.27.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Entre na sua conta Oficlaro.">
+  <title>Entrar | Oficlaro</title>
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="auth-page" data-page="login">
+  <a class="skip-link" href="#main-content">Ir para o conteúdo</a>
+  <main class="auth-panel" id="main-content">
+    <div class="auth-shell">
+      <a class="brand" href="/" aria-label="Oficlaro - início"><span class="brand-mark" aria-hidden="true">OC</span>Oficlaro</a>
+      <div class="auth-copy">
+        <span class="eyebrow">Bem-vindo de volta</span>
+        <h1>Entre na sua oficina</h1>
+        <p>Acompanhe ordens, clientes e aprovações em um só lugar.</p>
+      </div>
+      <p id="auth-message" class="alert" role="alert" hidden></p>
+      <form id="login-form" class="stack" novalidate>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input id="email" name="email" type="email" autocomplete="email" required maxlength="254">
+        </div>
+        <div class="field">
+          <label for="password">Senha</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8" maxlength="128">
+        </div>
+        <div class="split small">
+          <a class="muted" href="#" id="reset-password">Esqueci minha senha</a>
+          <a href="/cadastro">Criar conta</a>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit" data-loading-label="Entrando...">Entrar</button>
+      </form>
+    </div>
+  </main>
+  <aside class="auth-aside" aria-label="Proposta do Oficlaro">
+    <div class="auth-aside-content">
+      <span class="eyebrow">Transparência que fideliza</span>
+      <h2>Menos dúvidas no WhatsApp. Mais confiança na oficina.</h2>
+      <p>Da entrada do veículo à aprovação do orçamento, cada etapa fica clara para a equipe e para o cliente.</p>
+      <div class="auth-proof" aria-label="Benefícios"><div><strong>Tempo real</strong><span>Status e timeline</span></div><div><strong>Seguro</strong><span>Isolamento por oficina</span></div><div><strong>Simples</strong><span>Experiência mobile</span></div></div>
+    </div>
+  </aside>
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+  <script type="module" src="/js/pages/auth-page.js"></script>
+</body>
+</html>
+

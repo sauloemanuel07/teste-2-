@@ -1,0 +1,51 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /workshops/{workshopId}/orders/{orderId}/images/{fileName} {
+      allow read: if request.auth != null
+        && request.auth.token.workshopId == workshopId
+        && (request.auth.token.role != 'CUSTOMER' || request.auth.token.orderId == orderId);
+      allow create, update: if isStaff(workshopId)
+        && request.resource.size < 8 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)')
+        && request.resource.metadata.ownerUid == request.auth.uid
+        && request.resource.metadata.workshopId == workshopId
+        && request.resource.metadata.orderId == orderId;
+      allow delete: if isStaff(workshopId);
+    }
+
+    match /workshops/{workshopId}/orders/{orderId}/videos/{fileName} {
+      allow read: if request.auth != null
+        && request.auth.token.workshopId == workshopId
+        && (request.auth.token.role != 'CUSTOMER' || request.auth.token.orderId == orderId);
+      allow create, update: if isStaff(workshopId)
+        && request.resource.size < 50 * 1024 * 1024
+        && request.resource.contentType.matches('video/(mp4|webm|quicktime)')
+        && request.resource.metadata.ownerUid == request.auth.uid
+        && request.resource.metadata.workshopId == workshopId
+        && request.resource.metadata.orderId == orderId;
+      allow delete: if isStaff(workshopId);
+    }
+
+    match /workshops/{workshopId}/vehicles/{vehicleId}/{fileName} {
+      allow read: if isStaff(workshopId);
+      allow create, update: if isStaff(workshopId)
+        && request.resource.size < 8 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)')
+        && request.resource.metadata.ownerUid == request.auth.uid
+        && request.resource.metadata.workshopId == workshopId;
+      allow delete: if isStaff(workshopId);
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    function isStaff(workshopId) {
+      return request.auth != null
+        && request.auth.token.workshopId == workshopId
+        && request.auth.token.role in ['OWNER', 'MANAGER', 'MECHANIC', 'ATTENDANT', 'FINANCIAL'];
+    }
+  }
+}
